@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f6f2">
   <meta name="description" content="담금질 알고리즘이 외판원 문제의 경로를 개선하는 과정을 직접 조작하며 살펴보세요.">
-  <title>경로를 식히다 — 담금질 알고리즘 실험실</title>
+  <title>SA 알고리즘 · 자유 실험</title>
   <style>
     :root{--paper:#f4f6f2;--panel:#fff;--ink:#18221e;--muted:#738078;--line:#e4e9e4;--green:#176b53;--mint:#dff1e8;--orange:#e78b55;--blue:#4d7ea8;--shadow:0 12px 34px rgba(32,57,43,.07)}
     *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif;font-size:14px}button,input{font:inherit}button{cursor:pointer}
@@ -30,7 +30,7 @@
 <body>
   <main class="shell">
     <header class="topbar"><div class="brand"><span class="brand-mark">↗</span><span>알고리즘 실험실</span></div><div class="top-note">WEEK 04&nbsp; / &nbsp;NATURE-INSPIRED COMPUTING</div></header>
-    <section class="title-row"><div><div class="eyebrow">Simulated Annealing · TSP</div><h1>경로를 식히다</h1><p>뜨거울 때는 과감하게, 식어갈수록 신중하게. 담금질 알고리즘의 탐색을 관찰해 보세요.</p></div><div class="pill"><i></i><span>2차원 유클리드 거리</span></div></section>
+    <section class="title-row"><div><div class="eyebrow">Simulated Annealing · TSP</div><h1>SA 알고리즘</h1><p>초기 온도와 냉각률을 바꾸며 후보 경로가 채택되는 과정을 관찰해 보세요.</p></div><div class="pill"><i></i><span>2차원 유클리드 거리</span></div></section>
     <section class="layout" aria-label="외판원 문제 담금질 알고리즘 실험">
       <div class="left-col">
         <section class="card metal-card" aria-label="외판원 탐색에 맞춰 결정화되는 금속 원자 시뮬레이션"><div class="metal-screen"><canvas id="crystalCanvas" class="metal-canvas" aria-label="무질서하게 움직이는 원자가 규칙적인 결정 격자로 정렬되는 애니메이션"></canvas></div><div class="metal-copy"><div class="metal-kicker">금속의 냉각 · 실시간 연동</div><div class="metal-title">경로가 안정되면, 원자도 자리를 찾습니다</div><p>담금질 탐색이 진행되며 온도가 내려갈수록 활발하던 원자의 움직임이 잦아들고 규칙적인 결정 구조를 이룹니다.</p><div class="metal-meta"><span>결정화도</span><strong id="crystalPct">0%</strong><div class="metal-progress"><i id="crystalFill"></i></div><span id="phaseLabel">고온 · 활발한 운동</span></div></div></section>

@@ -4,30 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f4f6f1">
-  <meta name="description" content="식당 11곳의 경로를 따라 후보 생성, 온도와 채택 확률, 자유 실험까지 배우는 담금질 알고리즘 튜토리얼">
-  <title>경로를 식히다 · 차근차근 배우는 담금질</title>
-  <link rel="stylesheet" href="tutorial.css">
-  <script src="tutorial-model.js" defer></script>
-  <script src="tutorial.js" defer></script>
+  <meta name="description" content="식당 9곳의 경로로 후보 생성, 온도와 채택·기각 확률, 자유 실험까지 배우는 SA 알고리즘 튜토리얼">
+  <title>SA 알고리즘 · 단계별 튜토리얼</title>
+  <link rel="stylesheet" href="tutorial.css?v=20261103-2">
+  <script src="tutorial-model.js?v=20261103-2" defer></script>
+  <script src="tutorial.js?v=20261103-2" defer></script>
 </head>
 <body>
   <div class="app-shell">
-    <header class="masthead"><a class="brand" href="./"><span class="brand-icon">↗</span>경로를 식히다<span class="brand-tag">알고리즘 실험실</span></a><span class="edition">LEARN → EXPLORE</span></header>
-    <section class="page-heading"><div><p class="eyebrow">SIMULATED ANNEALING · INTERACTIVE TUTORIAL</p><h1>좋은 경로는 어떻게 찾을까?</h1><p class="lead">식당 11곳을 돌며, 무작위 후보가 더 나은 해가 되는 과정을 한 장면씩 배워 보세요.</p></div><span class="lesson-label" id="lessonLabel">PART 01 / 03</span></section>
+    <header class="masthead"><a class="brand" href="./"><span class="brand-icon">↗</span>SA 알고리즘<span class="brand-tag">알고리즘 실험실</span></a><span class="edition">LEARN → EXPLORE</span></header>
+    <section class="page-heading"><div><p class="eyebrow">SIMULATED ANNEALING · INTERACTIVE TUTORIAL</p><h1>SA 알고리즘</h1><p class="lead">식당 9곳의 방문 순서를 바꾸며, 무작위 후보가 더 나은 해가 되는 과정을 배워 보세요.</p></div><span class="lesson-label" id="lessonLabel">PART 01 / 03</span></section>
     <nav class="part-nav" aria-label="학습 파트"><button class="part-tab active" data-part="1" aria-current="step"><span>01</span><div>후보 경로 만들기<small>무작위 추출과 구간 뒤집기</small></div></button><button class="part-tab" data-part="2"><span>02</span><div>온도와 선택의 확률<small>긴 경로도 받아들이는 이유</small></div></button><button class="part-tab" data-part="3"><span>03</span><div>내가 직접 실험하기<small>조건을 바꾸며 자유롭게 탐색</small></div></button></nav>
     <main>
       <section id="tutorialView" aria-label="단계별 튜토리얼">
         <div class="lesson-progress"><span id="progressText">장면 1</span><div class="progress-track"><i id="progressFill"></i></div><button class="text-button" id="restartPart">이 파트 처음부터 ↺</button></div>
         <div class="learning-layout">
           <div class="scene-column">
-            <section class="panel map-panel"><div class="panel-heading"><div><p class="eyebrow">CAMPUS FOOD TOUR</p><h2>식당 11곳, 하나의 방문 순서</h2></div><span class="scene-state" id="sceneState">장소 살펴보기</span></div><div class="map-stage"><svg id="campusMap" viewBox="0 0 740 620" role="img" aria-label="첨부 안내도의 상대 위치로 배치한 식당 11곳과 방문 경로"></svg><div class="map-orientation">↑<span>안내도 위쪽</span></div></div><div class="map-legend" id="mapLegend"></div><p class="map-note">첨부 안내도의 상대 배치를 같은 비율로 옮긴 도식입니다. 길이는 도식상의 직선거리이며, 실제 보행거리나 미터 단위가 아닙니다.</p></section>
+            <section class="panel map-panel"><div class="panel-heading"><div><p class="eyebrow">CAMPUS FOOD TOUR</p><h2>식당 9곳, 하나의 방문 순서</h2></div><span class="scene-state" id="sceneState">장소 살펴보기</span></div><div class="map-stage"><svg id="campusMap" viewBox="0 0 740 620" role="img" aria-label="첨부 안내도의 상대 위치로 배치한 식당 9곳과 방문 순서"></svg><div class="map-orientation">↑<span>안내도 위쪽</span></div></div><div class="map-legend" id="mapLegend"></div><p class="numbering-note" id="visitOrderNote">점 안의 숫자는 방문 순서입니다.</p><p class="map-note">첨부 안내도의 상대 배치를 같은 비율로 옮긴 도식입니다. 길이는 도식상의 직선거리이며, 실제 보행거리나 미터 단위가 아닙니다.</p></section>
             <section class="panel order-panel"><div class="panel-heading"><h2>점의 위치는 그대로, 방문 순서만 바꿉니다</h2></div><div id="routeOrder"></div></section>
-            <div id="heatVisuals" class="heat-visuals" hidden><section class="panel temperature-panel"><div class="panel-heading"><h2>시간에 따라 내려가는 온도</h2><span id="temperatureValue" class="temperature-value">T = 160</span></div><div class="formula">T(t) = 160 × 0.65<sup>t</sup></div><svg id="temperatureChart" viewBox="0 0 400 150" role="img" aria-label="단계 t가 증가할수록 온도가 감소하는 그래프"></svg><p class="tiny">여기서 t는 학습 예시 번호(0~7), T는 거리와 비교하는 알고리즘의 온도입니다.</p></section><section class="panel metal-panel"><div class="panel-heading"><h2>금속의 냉각에 빗대어 보면</h2><span id="metalPhase" class="metal-phase">활발한 운동</span></div><canvas id="metalCanvas" height="145" aria-label="온도가 내려가며 원자들이 규칙적인 배열을 이루는 개념 애니메이션"></canvas><p class="tiny">원자 배열 ↔ 방문 순서 · 에너지 ↔ 경로 길이<br>금속 원자의 냉각을 설명하는 개념 애니메이션입니다.</p></section></div>
+            <div id="heatVisuals" class="heat-visuals" hidden><section class="panel temperature-panel"><div class="panel-heading"><h2>시간에 따라 내려가는 온도</h2><span id="temperatureValue" class="temperature-value">T = 160</span></div><div class="formula">T(t) = 160 × 0.65<sup>t</sup></div><svg id="temperatureChart" viewBox="0 0 400 150" role="img" aria-label="시간 t가 증가할수록 온도가 감소하는 그래프"></svg><div id="coolingProbabilityHistory" class="cooling-probability-history"></div><p class="tiny">t는 냉각이 진행된 시간입니다. 네 장면은 t=0, 1, 2, 7의 상황을 보여줍니다.</p></section><section class="panel metal-panel"><div class="panel-heading"><h2>금속의 냉각에 빗대어 보면</h2><span id="metalPhase" class="metal-phase">활발한 운동</span></div><canvas id="metalCanvas" height="145" aria-label="온도가 내려가며 원자들이 규칙적인 배열을 이루는 개념 애니메이션"></canvas><p class="tiny">원자 배열 ↔ 방문 순서 · 에너지 ↔ 경로 길이<br>금속 원자의 냉각을 설명하는 개념 애니메이션입니다.</p></section></div>
           </div>
           <aside class="panel coach-panel"><div class="coach-top"><span class="stage-pill" id="stagePill">들어가기</span><span id="roundCount" class="round-count"></span></div><div class="coach-body" id="coachBody" aria-live="polite" aria-atomic="true"><h2 id="coachTitle"></h2><div id="coachCopy" class="coach-copy"></div><div id="selectionNotice" class="selection-notice" hidden></div><div id="distanceMetrics" class="distance-metrics" hidden></div><div id="probabilityVisual" class="probability-visual" hidden></div><div id="extraContent"></div></div><div id="roundNav" class="round-nav" aria-label="학습 예시 바로 가기"></div><div class="coach-actions"><button id="previousStep" class="button secondary">← 이전</button><button id="nextStep" class="button primary">다음 →</button></div><p class="tutorial-note">학습용 고정 예시 · 무작위 실행에서 판정이 잘 드러나는 예시를 골랐습니다. 3부에서는 매번 새롭게 무작위 추출합니다.</p></aside>
         </div>
       </section>
-      <section id="labView" hidden aria-label="자유 실험"><div class="panel lab-intro"><div><p class="eyebrow">PART 03 · YOUR TURN</p><h2>이제, 직접 경로를 식혀 보세요.</h2><p>도시 수·초기 온도·냉각률을 바꿔 탐색하세요. 전체 프레임과 대표 프레임 탭에서 후보의 채택 과정을 다시 볼 수 있습니다.</p></div><a class="button secondary" href="lab.html" target="_blank" rel="noopener">실험 화면만 크게 열기 ↗</a></div><iframe id="labFrame" title="기존 외판원 문제 자유 실험실" loading="lazy"></iframe></section>
+      <section id="labView" hidden aria-label="자유 실험"><div class="panel lab-intro"><div><p class="eyebrow">PART 03 · YOUR TURN</p><h2>이제 SA 알고리즘을 직접 실험해 보세요.</h2><p>도시 수·초기 온도·냉각률을 바꿔 탐색하세요. 전체 프레임과 대표 프레임 탭에서 후보의 채택 과정을 다시 볼 수 있습니다.</p></div><a class="button secondary" href="lab.html?v=20261103-2" target="_blank" rel="noopener">실험 화면만 크게 열기 ↗</a></div><iframe id="labFrame" title="기존 외판원 문제 자유 실험실" loading="lazy"></iframe></section>
     </main>
     <footer class="page-footer"><span>후보 하나를 만들고 → 비교하고 → 받아들이거나 유지하고 → 온도를 낮춥니다.</span><a href="https://doi.org/10.1126/science.220.4598.671" target="_blank" rel="noopener">담금질 알고리즘 원 논문 ↗</a></footer>
   </div>
