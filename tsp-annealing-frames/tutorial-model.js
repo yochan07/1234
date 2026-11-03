@@ -22,7 +22,7 @@
     {a:3,b:8,t:2,sample:.60951929288428242},
     {a:7,b:8,t:7,sample:.50097845937170948}
   ];
-  const length = order => order.reduce((sum,id,i) => {
+  const rawLength = order => order.reduce((sum,id,i) => {
     const a=places[id], b=places[order[(i+1)%order.length]];
     return sum + Math.hypot(a.x-b.x,a.y-b.y);
   },0);
@@ -31,6 +31,22 @@
     candidate.splice(a,b-a+1,...candidate.slice(a,b+1).reverse());
     return candidate;
   }
+  const referenceDelta=40;
+  // Use one diagram-distance unit throughout the lesson. Calibrate it so the
+  // second cooling example has the same delta as the reference probability bars.
+  // Uniform scaling preserves the map geometry and every route comparison.
+  function secondExampleRawDelta() {
+    let order=initial.slice();
+    plan1.forEach(({a,b})=>{
+      const candidate=reverse(order,a,b);
+      if(rawLength(candidate)<=rawLength(order))order=candidate;
+    });
+    const first=reverse(order,plan2[0].a,plan2[0].b);
+    const second=reverse(first,plan2[1].a,plan2[1].b);
+    return rawLength(second)-rawLength(first);
+  }
+  const distanceScale=referenceDelta/secondExampleRawDelta();
+  const length=order=>rawLength(order)*distanceScale;
   function buildRounds(start,plan,warmup) {
     let order=start.slice();
     return plan.map((entry,index) => {
@@ -57,6 +73,6 @@
     if(part===2)result.push({kind:'part2-summary'});
     return result;
   }
-  window.SATutorial=Object.freeze({places,initial,part1,part2,detour,length,reverse,scenes,
+  window.SATutorial=Object.freeze({places,initial,part1,part2,detour,length,reverse,scenes,referenceDelta,
     point:id=>({x:360+(places[id].x-220)*1.5,y:60+(places[id].y-73)*1.5})});
 })();

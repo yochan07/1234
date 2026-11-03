@@ -79,7 +79,7 @@
   function showProbability(round,decision=false){
     $('probabilityVisual').hidden=false;
     const improved=round.delta<=0;
-    const detail=improved?'짧은 후보는 온도와 관계없이 채택 확률 100%, 기각 확률 0%입니다.':`채택 확률 = exp(−${fmt(round.delta)} / ${round.temperature.toFixed(2)})<br>기각 확률 = 1 − 채택 확률<br>${decision?(round.outcome==='worse-accepted'?'이번 예시에서는 긴 후보를 채택했습니다.':'이번 예시에서는 긴 후보를 기각했습니다.'):'초록색이 클수록 채택될 가능성이, 빨간색이 클수록 기각될 가능성이 높습니다.'} 확률에 따른 실제 선택은 무작위입니다.`;
+    const detail=improved?'짧은 후보는 온도와 관계없이 채택 확률 100%, 기각 확률 0%입니다.':`채택 확률 = exp(−${fmt(round.delta)} / ${round.temperature.toFixed(2)})<br>기각 확률 = 1 − 채택 확률<br>${decision?(round.outcome==='worse-accepted'?'이번 예시에서는 긴 후보를 채택했습니다.':'이번 예시에서는 긴 후보를 기각했습니다.'):'파란색이 클수록 채택될 가능성이, 빨간색이 클수록 기각될 가능성이 높습니다.'} 확률에 따른 실제 선택은 무작위입니다.`;
     $('probabilityVisual').innerHTML=probabilityMarkup(round.probability,detail);
   }
   function temperatureChart(t){
@@ -88,8 +88,8 @@
     const path=values.map((T,i)=>`${i?'L':'M'}${x(i)},${y(T)}`).join(' '),T=160*Math.pow(.65,t);
     $('temperatureChart').innerHTML=`<path d="M36 17 V120 H384" stroke="#ccd9c5" fill="none"/><path d="${path}" fill="none" stroke="#cb955d" stroke-width="2.5"/><circle cx="${x(t)}" cy="${y(T)}" r="5" fill="#b77338" stroke="white" stroke-width="2"/><g fill="#8d9c84" font-size="10" font-family="system-ui"><text x="4" y="22">160</text><text x="17" y="123">0</text><text x="32" y="142">0</text><text x="372" y="142">7 → t</text><text x="${Math.min(315,x(t)+8)}" y="${Math.max(16,y(T)-9)}">t = ${t.toFixed(t%1?1:0)}</text></g>`;
     $('temperatureValue').textContent=`T = ${T.toFixed(2)}`;
-    const referenceDelta=40;
-    $('coolingProbabilityHistory').innerHTML=`<p class="history-title">같은 길이 증가 Δ=40인 긴 후보라면</p>${[0,1,2,7].map(time=>{const probability=Math.exp(-referenceDelta/(160*Math.pow(.65,time)));return `<div class="history-row ${Math.abs(time-t)<.05?'active':''}"><span>t=${time}</span><div class="history-track" role="img" aria-label="t=${time}, 채택 ${percent(probability)}, 기각 ${percent(1-probability)}"><i style="width:${probability*100}%"></i><b style="width:${(1-probability)*100}%"></b></div><span>${percent(probability).replace('<','&lt;')}</span></div>`;}).join('')}<p class="tiny">초록: 채택 · 빨강: 기각 · 오른쪽 숫자: 채택 확률</p>`;
+    const referenceDelta=M.referenceDelta;
+    $('coolingProbabilityHistory').innerHTML=`<p class="history-title">같은 길이 증가 Δ=${referenceDelta}인 긴 후보라면</p>${[0,1,2,7].map(time=>{const probability=Math.exp(-referenceDelta/(160*Math.pow(.65,time)));return `<div class="history-row ${Math.abs(time-t)<.05?'active':''}"><span>t=${time}</span><div class="history-track" role="img" aria-label="t=${time}, 채택 ${percent(probability)}, 기각 ${percent(1-probability)}"><i style="width:${probability*100}%"></i><b style="width:${(1-probability)*100}%"></b></div><span>${percent(probability).replace('<','&lt;')}</span></div>`;}).join('')}<p class="tiny">파랑: 채택 · 빨강: 기각 · 오른쪽 숫자: 채택 확률</p>`;
     metalT=Math.max(0,Math.min(7,t));
     $('metalPhase').textContent=t<2?'고온 · 활발한 운동':t<5?'냉각 · 정렬하는 중':'저온 · 규칙적인 배열';
   }
@@ -110,9 +110,9 @@
       $('extraContent').innerHTML='<div class="formula">T(t) = 160 × 0.65<sup>t</sup></div><p class="key-line">다음 네 장면은 t=0, 1, 2, 7의 상황입니다. 마지막은 충분히 시간이 흘러 온도가 낮아진 시점으로 넘어갑니다.</p><div class="outcome-list"><div><b>1</b>짧은 후보를 채택</div><div><b>2</b>온도가 높아 긴 후보도 채택</div><div><b>3</b>바뀐 순서에서 더 짧은 후보를 채택</div><div><b>4</b>시간이 흘러 긴 후보를 기각</div></div>';
     }else if(kind==='probability-intro'){
       $('stagePill').textContent='02 · 채택 확률';$('coachTitle').textContent='온도만 바꾸면 확률은 어떻게 달라질까요?';
-      $('coachCopy').innerHTML='<p>긴 후보의 거리 증가량을 Δ라고 하면, <strong>채택 확률 = exp(−Δ / T)</strong>, <strong>기각 확률 = 1 − 채택 확률</strong>입니다.</p><p>막대 전체가 100%입니다. <strong>초록색은 채택 확률, 빨간색은 기각 확률</strong>을 나타냅니다. 아래 온도를 낮춰 두 색의 비율을 비교해 보세요.</p>';
+      $('coachCopy').innerHTML='<p>긴 후보의 거리 증가량을 Δ라고 하면, <strong>채택 확률 = exp(−Δ / T)</strong>, <strong>기각 확률 = 1 − 채택 확률</strong>입니다.</p><p>막대 전체가 100%입니다. <strong>파란색은 채택 확률, 빨간색은 기각 확률</strong>을 나타냅니다. 아래 온도를 낮춰 두 색의 비율을 비교해 보세요.</p>';
       $('extraContent').innerHTML='<label class="probe-label" for="temperatureProbe">온도 직접 바꾸기 <output id="probeOutput">160</output></label><input id="temperatureProbe" class="probe-slider" type="range" min="8" max="160" value="160"><p class="key-line">같은 Δ라면 온도가 낮을수록 p가 작아집니다. 실제 탐색에서는 Δ도 매번 달라집니다.</p>';
-      const update=()=>{state.probe=+$('temperatureProbe').value;$('probeOutput').textContent=state.probe;const p=Math.exp(-100/state.probe);$('probabilityVisual').hidden=false;$('probabilityVisual').innerHTML=probabilityMarkup(p,'길이 증가량 Δ=100을 고정했습니다. 온도가 낮아질수록 초록색이 줄고 빨간색이 늘어납니다. 같은 확률에서도 실제 채택 여부는 무작위로 달라질 수 있습니다.');temperatureChart(Math.min(7,Math.log(state.probe/160)/Math.log(.65)));};
+      const update=()=>{state.probe=+$('temperatureProbe').value;$('probeOutput').textContent=state.probe;const p=Math.exp(-M.referenceDelta/state.probe);$('probabilityVisual').hidden=false;$('probabilityVisual').innerHTML=probabilityMarkup(p,'길이 증가량 Δ=40을 고정했습니다. 온도가 낮아질수록 파란색이 줄고 빨간색이 늘어납니다. 같은 확률에서도 실제 채택 여부는 무작위로 달라질 수 있습니다.');temperatureChart(Math.min(7,Math.log(state.probe/160)/Math.log(.65)));};
       $('temperatureProbe').value=state.probe;$('temperatureProbe').addEventListener('input',update);update();
     }else if(kind==='part1-summary'){
       $('stagePill').textContent='01 · 배운 내용';$('coachTitle').textContent='후보 만들기와 선택은 별개의 일입니다.';
@@ -144,8 +144,8 @@
       $('coachCopy').innerHTML='<p>현재 경로 A와 후보 B의 전체 길이를 계산합니다. 마지막 식당에서 출발 식당으로 돌아오는 구간도 포함합니다.</p><p><strong>Δ = 후보 길이 − 현재 길이</strong>이므로, Δ가 음수면 짧아지고 양수면 길어집니다.</p>';
       renderMetrics(round);notice('1부의 연습 규칙: 더 짧은 후보는 채택하고, 더 긴 후보는 기각합니다.');
     }else if(kind==='probability'){
-      $('stagePill').textContent='③ 확률 확인';$('coachTitle').textContent=round.delta<=0?'짧은 후보는 초록색이 100%입니다.':scene.round===1?'온도가 높아 채택 확률이 높습니다.':'시간이 흘러 기각 확률이 높아졌습니다.';
-      $('coachCopy').innerHTML=round.delta<=0?'<p>온도에 관계없이 더 짧은 후보는 항상 채택합니다. 막대는 <strong>초록색 100%, 빨간색 0%</strong>입니다.</p>':`<p>${scene.round===3?'충분히 시간이 흐른 t=7의 상황입니다. ':''}현재 온도는 <strong>T = ${round.temperature.toFixed(2)}</strong>입니다. 거리 증가량 Δ와 이 온도로 채택·기각 확률을 계산합니다.</p><p>${scene.round===1?'이번 후보는 증가한 길이가 작고 온도도 높아, 초록색 채택 비율이 큽니다.':'온도가 낮아져 초록색 채택 비율은 매우 작고, 빨간색 기각 비율이 큽니다.'} 실제 선택은 이 확률에 따라 무작위로 이뤄집니다.</p>`;
+      $('stagePill').textContent='③ 확률 확인';$('coachTitle').textContent=round.delta<=0?'짧은 후보는 파란색이 100%입니다.':scene.round===1?'온도가 높아 채택 확률이 높습니다.':'시간이 흘러 기각 확률이 높아졌습니다.';
+      $('coachCopy').innerHTML=round.delta<=0?'<p>온도에 관계없이 더 짧은 후보는 항상 채택합니다. 막대는 <strong>파란색 100%, 빨간색 0%</strong>입니다.</p>':`<p>${scene.round===3?'충분히 시간이 흐른 t=7의 상황입니다. ':''}현재 온도는 <strong>T = ${round.temperature.toFixed(2)}</strong>입니다. 거리 증가량 Δ와 이 온도로 채택·기각 확률을 계산합니다.</p><p>${scene.round===1?'이번 후보는 증가한 길이가 작고 온도도 높아, 파란색 채택 비율이 큽니다.':'온도가 낮아져 파란색 채택 비율은 매우 작고, 빨간색 기각 비율이 큽니다.'} 실제 선택은 이 확률에 따라 무작위로 이뤄집니다.</p>`;
       renderMetrics(round);showProbability(round,false);
     }else{
       $('stagePill').textContent='④ 채택 또는 기각';const result=round.outcome;
