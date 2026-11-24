@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ec">
+  <meta name="description" content="담금질 알고리즘의 아이디어, 수락 확률, 식당 방문 경로 문제를 이해하기 쉽게 설명합니다.">
+  <title>알고리즘 소개 — SA 알고리즘</title>
+  <style>
+    :root{--paper:#f4f3ec;--panel:#fffefa;--ink:#19352e;--muted:#5e7067;--line:#dce3d8;--green:#246d59;--pale:#f0f3ea;--orange:#c78232;--shadow:0 12px 34px rgba(35,54,42,.05)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-size:16px;line-height:1.75}a{color:inherit}.shell{max-width:1450px;margin:auto;padding:30px 36px 44px}.hero{position:relative;overflow:hidden;padding:6px 0 27px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--green)}.mark{display:inline-block;width:22px;height:11px;border:1px solid var(--green);border-radius:50%;transform:rotate(-25deg);margin-right:9px;vertical-align:middle}.ghost{position:absolute;right:16px;top:-48px;color:rgba(36,109,89,.09);font-size:clamp(135px,17vw,220px);font-weight:850;line-height:1;letter-spacing:-.1em;pointer-events:none}.hero h1{position:relative;margin:13px 0 10px;max-width:900px;font-size:clamp(39px,5vw,61px);line-height:1.2;letter-spacing:-.065em}.hero>p{position:relative;max-width:750px;margin:0;color:var(--muted);font-size:17px}.back{position:absolute;right:0;bottom:29px;color:var(--green);font-size:13px;font-weight:750;text-decoration:none}.back:hover{text-decoration:underline;text-underline-offset:4px}.chapters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:27px}.chapter{display:flex;align-items:center;gap:13px;min-height:79px;padding:13px 16px;border:1px solid var(--line);border-radius:15px;background:var(--panel);text-decoration:none;transition:transform .18s,border-color .18s}.chapter:hover{transform:translateY(-2px);border-color:#9bbca7}.number{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border:1px solid var(--line);border-radius:50%;color:var(--green);font-variant-numeric:tabular-nums}.chapter strong{display:block;font-size:14px;line-height:1.4}.chapter small{display:block;margin-top:3px;color:var(--muted);font-size:12px;line-height:1.4}.card{min-width:0;padding:26px 29px;border:1px solid var(--line);border-radius:20px;background:var(--panel);box-shadow:var(--shadow)}.kicker{color:var(--green);font-size:11px;font-weight:800;letter-spacing:.12em}.card h2{margin:5px 0 15px;font-size:clamp(23px,3vw,29px);line-height:1.35;letter-spacing:-.04em}.overview{margin-bottom:18px}.overview-copy{display:grid;gap:10px}.overview-copy p{margin:0;color:#34483e;font-size:16px;line-height:1.9}.overview-copy strong{color:#155d4b}.columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(330px,.9fr);gap:18px;align-items:start}.card p{color:#45584e}.lede{margin:-4px 0 17px;font-size:15px;line-height:1.85}.label{margin:18px 0 7px;font-size:14px;font-weight:800}.formula-box{overflow:auto;margin:0 0 10px;padding:15px 18px;border-radius:12px;background:var(--pale);color:#194a3d}.formula{white-space:nowrap;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:clamp(19px,2vw,22px);line-height:1.6}.copy{margin:0;color:var(--muted)!important;font-size:14px;line-height:1.85}.callout{margin-top:17px;padding:13px 15px;border-left:3px solid var(--orange);background:#fbf6e9;color:#625944;font-size:14px;line-height:1.85}.callout strong{color:#55462b}.symbols{margin:3px 0 0}.symbol{display:grid;grid-template-columns:minmax(90px,.34fr) 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.symbol:last-child{border:0}.symbol dt{color:#17644f;font:italic 17px "Cambria Math",Cambria,serif}.symbol dd{margin:0;color:#53645b;font-size:14px;line-height:1.7}.steps{display:grid;margin-top:8px}.step{display:grid;grid-template-columns:35px 1fr;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.step:last-child{border:0}.step-num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#eaf2e9;color:var(--green);font-weight:800}.step strong{display:block;margin-bottom:2px;font-size:15px}.step p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}.problem{margin-top:18px}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}.fact{padding:13px;border-radius:11px;background:#f5f7f1}.fact strong{display:block;color:var(--green);font-size:13px}.fact span{display:block;margin-top:4px;color:var(--muted);font-size:13px;line-height:1.65}.pros{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-top:17px}.pros p{margin:0;font-size:14px;line-height:1.85}.pros strong{color:var(--green)}.action{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:19px;padding:20px 22px;border-radius:16px;background:#e9f0e7}.action strong{font-size:16px}.action p{margin:3px 0 0;color:var(--muted);font-size:14px}.button{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:11px 17px;border-radius:9px;background:#216852;color:white;text-decoration:none;font-size:14px;font-weight:750}.button:hover{background:#174f3d}.footer{display:flex;justify-content:space-between;gap:12px;margin-top:22px;padding-top:15px;border-top:1px solid var(--line);color:#738078;font-size:12px}.footer a{color:var(--green);text-decoration:none}
+    @media(max-width:850px){.shell{padding:23px 21px 34px}.chapters{grid-template-columns:1fr 1fr}.columns{grid-template-columns:1fr}.back{position:relative;display:inline-block;bottom:auto;margin-top:14px}.hero{padding-bottom:19px}}
+    @media(max-width:560px){body{font-size:15px}.shell{padding:17px 13px 25px}.hero h1{font-size:37px;max-width:330px}.hero>p{max-width:330px;font-size:15px}.ghost{top:0;right:0;font-size:105px}.chapters{gap:8px;margin-bottom:14px}.chapter{gap:8px;min-height:69px;padding:9px;border-radius:12px}.number{flex-basis:31px;width:31px;height:31px;font-size:12px}.chapter strong{font-size:12px}.chapter small{font-size:10px}.card{padding:20px 17px;border-radius:16px}.overview-copy p{font-size:15px}.columns{gap:11px}.lede{font-size:14px}.formula-box{padding:12px}.formula{font-size:17px}.copy,.callout,.symbol dd,.step p,.pros p{font-size:13px}.symbol{grid-template-columns:76px 1fr;gap:8px}.facts{grid-template-columns:1fr}.fact{padding:11px}.pros{grid-template-columns:1fr;gap:9px}.action{align-items:flex-start;flex-direction:column;padding:17px}.footer{flex-direction:column;gap:5px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.chapter{transition:none}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow"><span class="mark" aria-hidden="true"></span>SIMULATED ANNEALING · INTRODUCTION</div>
+      <div class="ghost" aria-hidden="true">00</div>
+      <h1>개인의 경험에서<br>집단의 탐색으로</h1>
+      <p>실습을 시작하기 전에, 담금질 알고리즘이 후보를 만들고 좋은 경로를 찾아가는 방법을 차근차근 알아봅니다.</p>
+      <a class="back" href="index.html">단계별 튜토리얼로 돌아가기 ↗</a>
+    </header>
+
+    <nav class="chapters" aria-label="소개 목차">
+      <a class="chapter" href="#overview"><span class="number">00</span><span><strong>알고리즘 소개</strong><small>유래와 핵심 아이디어</small></span></a>
+      <a class="chapter" href="#principle"><span class="number">01</span><span><strong>기본 원리</strong><small>온도와 수락 확률</small></span></a>
+      <a class="chapter" href="#process"><span class="number">02</span><span><strong>탐색 순서</strong><small>후보 생성부터 냉각까지</small></span></a>
+      <a class="chapter" href="#problem"><span class="number">03</span><span><strong>문제에 적용하기</strong><small>식당 경로와 실습의 범위</small></span></a>
+    </nav>
+
+    <section class="card overview" id="overview">
+      <div class="kicker">BEFORE YOU START</div>
+      <h2>담금질 알고리즘, 다섯 문장으로 이해하기</h2>
+      <div class="overview-copy">
+        <p>담금질 알고리즘(Simulated Annealing, SA)은 금속을 가열한 뒤 천천히 식히면 안정된 결정 구조가 만들어지는 과정에서 착안했습니다.</p>
+        <p>최적화 문제에서는 가능한 답 하나를 <strong>현재 해</strong>로 두고, 작은 변화를 준 <strong>후보 해</strong>를 만들어 비교합니다.</p>
+        <p>후보가 더 좋아지면 곧바로 이동합니다. 더 나빠졌더라도 탐색 초반에는 일정한 확률로 받아들여 다른 가능성을 살펴봅니다.</p>
+        <p>나쁜 후보도 가끔 수용하는 덕분에 현재 주변에만 갇히지 않고 더 넓은 영역을 탐색할 수 있습니다.</p>
+        <p>반복이 이어지며 온도가 낮아지면 나쁜 후보를 수용할 확률이 줄어들고, 지금까지 찾은 좋은 해 주변을 더 꼼꼼히 살핍니다.</p>
+      </div>
+    </section>
+
+    <div class="columns">
+      <section class="card" id="principle">
+        <div class="kicker">HOW IT MOVES</div>
+        <h2>후보를 비교하고, 온도를 낮춥니다</h2>
+        <p class="lede">현재 경로와 후보 경로의 길이 차이를 계산합니다. 후보가 길어졌을 때 받아들일지는 현재 온도와 무작위 추첨으로 정합니다.</p>
+        <div class="label">더 긴 후보 경로의 수락 확률</div>
+        <div class="formula-box"><div class="formula">P(수락) = exp(−Δ / T) &nbsp; (Δ &gt; 0)</div></div>
+        <p class="copy">Δ는 후보 경로에서 늘어난 거리이고, T는 현재 온도입니다. 후보가 짧아지거나 같으면 항상 수락합니다. 후보가 길어지면 이 확률에 따라 받아들일지 결정합니다.</p>
+        <div class="label">이 실습의 온도 변화</div>
+        <div class="formula-box"><div class="formula">T(t) = 160 × 0.65<sup>t</sup></div></div>
+        <p class="copy">t가 커질수록 온도는 낮아집니다. 온도가 높으면 더 긴 경로를 받아들일 가능성이 있고, 낮으면 좋은 경로 주변에 집중합니다.</p>
+        <aside class="callout"><strong>핵심은 균형입니다.</strong> 넓게 살피는 탐색과 찾은 해를 다듬는 집중을 함께 사용합니다. 냉각률이나 무작위 추첨에 따라 결과는 달라질 수 있고, 가장 짧은 경로를 보장하지는 않습니다.</aside>
+      </section>
+
+      <section class="card">
+        <div class="kicker">SYMBOL GUIDE</div>
+        <h2>기호가 뜻하는 것</h2>
+        <dl class="symbols">
+          <div class="symbol"><dt>T</dt><dd>현재 온도. 더 긴 후보를 받아들일 가능성을 조절합니다.</dd></div>
+          <div class="symbol"><dt>t</dt><dd>탐색을 시작한 뒤 지난 단계입니다. 이 실습에서는 정해진 예시의 냉각 시점을 가리킵니다.</dd></div>
+          <div class="symbol"><dt>Δ</dt><dd>후보 경로 길이에서 현재 경로 길이를 뺀 값입니다.</dd></div>
+          <div class="symbol"><dt>P(수락)</dt><dd>현재보다 긴 후보 경로를 받아들일 확률입니다.</dd></div>
+          <div class="symbol"><dt>현재 경로</dt><dd>알고리즘이 지금 이동하며 살펴보는 방문 순서입니다.</dd></div>
+          <div class="symbol"><dt>최선의 경로</dt><dd>탐색 중 지금까지 발견한 경로 가운데 가장 짧은 기록입니다.</dd></div>
+        </dl>
+      </section>
+
+      <section class="card" id="process">
+        <div class="kicker">ONE ITERATION AT A TIME</div>
+        <h2>탐색 한 번은 이렇게 진행됩니다</h2>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span><div><strong>현재 경로에서 출발</strong><p>방문할 장소를 한 번씩 들른 뒤 처음 장소로 돌아오는 순서를 준비합니다.</p></div></div>
+          <div class="step"><span class="step-num">2</span><div><strong>이웃 경로 만들기</strong><p>경로의 일부 구간을 골라 순서를 뒤집어 새로운 후보를 제안합니다.</p></div></div>
+          <div class="step"><span class="step-num">3</span><div><strong>길이를 비교하고 이동</strong><p>짧아졌다면 후보를 채택합니다. 길어졌다면 확률에 따라 채택하거나 현재 경로를 유지합니다.</p></div></div>
+          <div class="step"><span class="step-num">4</span><div><strong>온도를 낮추고 기록</strong><p>더 짧은 경로를 찾았는지 기록한 다음 온도를 낮추고 다시 시도합니다.</p></div></div>
+        </div>
+      </section>
+
+      <section class="card problem" id="problem">
+        <div class="kicker">THE ROUTE PROBLEM</div>
+        <h2>식당 아홉 곳을 한 바퀴</h2>
+        <p class="lede">여러 장소를 각각 한 번씩 방문하고 출발점으로 돌아오는 순서를 찾는 외판원 문제(TSP)를 식당 방문 경로로 살펴봅니다.</p>
+        <div class="facts">
+          <div class="fact"><strong>해</strong><span>아홉 식당을 방문하는 순서 하나가 후보 경로 하나입니다.</span></div>
+          <div class="fact"><strong>목표</strong><span>모든 구간의 길이를 더해 전체 이동 거리를 줄입니다.</span></div>
+          <div class="fact"><strong>탐색</strong><span>방문 순서의 일부를 뒤집어 새 경로를 만들고 비교합니다.</span></div>
+        </div>
+        <div class="pros">
+          <p><strong>이 실습에서 볼 점</strong><br>첫 번째와 두 번째 파트는 선택 과정을 따라가며 원리를 익히고, 세 번째 파트에서는 도시 수와 온도, 냉각률을 바꾸어 직접 탐색합니다.</p>
+          <p><strong>거리 해석</strong><br>지도는 안내도의 상대 위치를 옮긴 도식입니다. 계산하는 값은 도식상의 직선거리이며 실제 보행거리나 미터 단위가 아닙니다.</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="action"><div><strong>이제 후보 경로가 바뀌는 과정을 따라가 보세요</strong><p>무작위 후보가 언제 채택되고, 온도가 낮아지면 무엇이 달라지는지 확인할 수 있습니다.</p></div><a class="button" href="index.html#tutorialView">단계별 튜토리얼 시작 <span aria-hidden="true">↗</span></a></section>
+    <footer class="footer"><span>실습의 도식 거리와 무작위 실행의 결과는 최적 경로를 보장하지 않습니다.</span><a href="https://doi.org/10.1126/science.220.4598.671" target="_blank" rel="noopener">담금질 알고리즘 원 논문 ↗</a></footer>
+  </main>
+</body>
+</html>
