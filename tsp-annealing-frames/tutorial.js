@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const M=window.SATutorial, $=id=>document.getElementById(id);
-  const state={part:1,indices:{1:0,2:0},probe:160};
+  const state={part:0,indices:{1:0,2:0},probe:160};
   const sceneLists={1:M.scenes(1),2:M.scenes(2)};
   const colors={current:'#4c7eab',candidate:'#7b68b0',selected:'#d9943e',improved:'#2b895d','worse-accepted':'#d08c3a',rejected:'#c76459',shared:'#acbda8'};
   let selectionTimer=null,selectionInterval=null,renderVersion=0,metalT=0;
@@ -171,9 +171,10 @@
   function render(){
     cancelSelection();renderVersion++;
     document.querySelectorAll('.part-tab[data-part]').forEach(button=>{const active=+button.dataset.part===state.part;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
-    $('lessonLabel').textContent=`PART 0${state.part} / 03`;
-    $('tutorialView').hidden=state.part===3;$('labView').hidden=state.part!==3;
+    $('lessonLabel').textContent=`PART 0${state.part} / 04`;
+    $('introView').hidden=state.part!==0;$('tutorialView').hidden=state.part===0||state.part===3;$('labView').hidden=state.part!==3;
     if(state.part===3){loadLab();return;}
+    if(state.part===0){document.body.dataset.lessonPart=state.part;document.body.dataset.lessonScene='overview';document.body.dataset.lessonRound='';return;}
     const scene=currentScene(),round=currentRound(scene),index=state.indices[state.part],total=sceneLists[state.part].length;
     $('progressText').textContent=`장면 ${index+1} / ${total}`;$('progressFill').style.width=`${(index+1)/total*100}%`;
     $('heatVisuals').hidden=state.part!==2;
@@ -185,14 +186,14 @@
     const count=(state.part===1?M.part1:M.part2).length;
     $('roundNav').innerHTML=Array.from({length:count},(_,i)=>`<button type="button" data-round="${i}" class="${scene.round===i?'active':scene.round!==undefined&&scene.round>i?'done':''}" aria-label="예시 ${i+1}로 이동">${i+1}</button>`).join('');
     $('roundNav').querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{state.indices[state.part]=sceneLists[state.part].findIndex(s=>s.round===+button.dataset.round&&s.kind==='pick');render();}));
-    $('previousStep').disabled=state.part===1&&index===0;
+    $('previousStep').disabled=false;
     const next=sceneLists[state.part][index+1];
-    $('nextStep').textContent=index===total-1?(state.part===1?'2부 · 온도와 확률 배우기 →':'3부 · 직접 실험하기 →'):next?.kind==='pick'?'다음 · 두 위치 추출 →':next?.kind==='reverse'?'다음 · 구간 뒤집기 →':next?.kind==='decision'?'다음 · 판정 확인 →':'다음 →';
+    $('nextStep').textContent=index===total-1?(state.part===1?'02 · 온도와 확률 배우기 →':'03 · 직접 실험하기 →'):next?.kind==='pick'?'다음 · 두 위치 추출 →':next?.kind==='reverse'?'다음 · 구간 뒤집기 →':next?.kind==='decision'?'다음 · 판정 확인 →':'다음 →';
     if(scene.kind==='pick')animateSelection(scene,round);
     document.body.dataset.lessonPart=state.part;document.body.dataset.lessonScene=scene.kind;document.body.dataset.lessonRound=scene.round===undefined?'':scene.round;
   }
-  function next(){if(state.part===3||$('nextStep').disabled)return;const list=sceneLists[state.part];if(state.indices[state.part]===list.length-1){state.part++;if(state.part===2)state.indices[2]=0;render();window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'});}else{state.indices[state.part]++;render();}}
-  function previous(){if(state.part===3)return;if(state.indices[state.part]>0)state.indices[state.part]--;else if(state.part===2){state.part=1;state.indices[1]=sceneLists[1].length-1;}render();}
+  function next(){if(state.part===3||$('nextStep').disabled)return;if(state.part===0){state.part=1;render();window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'});return;}const list=sceneLists[state.part];if(state.indices[state.part]===list.length-1){state.part++;if(state.part===2)state.indices[2]=0;render();window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'});}else{state.indices[state.part]++;render();}}
+  function previous(){if(state.part===0||state.part===3)return;if(state.indices[state.part]>0)state.indices[state.part]--;else if(state.part===2){state.part=1;state.indices[1]=sceneLists[1].length-1;}else if(state.part===1)state.part=0;render();}
   let labLoaded=false,labObserver=null;
   function loadLab(){if(labLoaded)return;labLoaded=true;const frame=$('labFrame');frame.addEventListener('load',()=>{try{const resize=()=>{const height=frame.contentDocument.body.scrollHeight;frame.style.height=`${height+30}px`;};resize();labObserver=new ResizeObserver(resize);labObserver.observe(frame.contentDocument.body);}catch{frame.style.height='1800px';}});frame.src='lab.html?v=20261103-2';}
   function drawMetal(time){
@@ -203,9 +204,10 @@
   document.querySelectorAll('.part-tab[data-part]').forEach(button=>button.addEventListener('click',()=>{state.part=+button.dataset.part;render();}));
   $('nextStep').addEventListener('click',next);$('previousStep').addEventListener('click',previous);
   $('restartPart').addEventListener('click',()=>{state.indices[state.part]=0;render();});
-  document.addEventListener('keydown',event=>{if(['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;if(event.key==='ArrowRight'&&state.part!==3){event.preventDefault();next();}if(event.key==='ArrowLeft'&&state.part!==3){event.preventDefault();previous();}});
-  window.addEventListener('resize',()=>{if(state.part!==3){const scene=currentScene();renderMap(scene,currentRound(scene));}});
+  document.addEventListener('keydown',event=>{if(['INPUT','SELECT','TEXTAREA','BUTTON','A'].includes(event.target.tagName))return;if(event.key==='ArrowRight'&&state.part!==3){event.preventDefault();next();}if(event.key==='ArrowLeft'&&state.part!==3){event.preventDefault();previous();}});
+  window.addEventListener('resize',()=>{if(state.part===1||state.part===2){const scene=currentScene();renderMap(scene,currentRound(scene));}});
   // Read-only state is useful for lesson progress and automated accessibility checks.
-  window.SATutorialView={getState:()=>({part:state.part,index:state.part===3?0:state.indices[state.part],scene:state.part===3?null:currentScene()})};
+  document.querySelectorAll('[data-go-part]').forEach(button=>button.addEventListener('click',()=>{state.part=+button.dataset.goPart;render();window.scrollTo({top:0,behavior:reduced.matches?'instant':'smooth'});}));
+  window.SATutorialView={getState:()=>({part:state.part,index:state.part===0||state.part===3?0:state.indices[state.part],scene:state.part===0||state.part===3?null:currentScene()})};
   render();requestAnimationFrame(drawMetal);
 })();

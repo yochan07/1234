@@ -6,21 +6,26 @@
   <meta name="theme-color" content="#f4f6f1">
   <meta name="description" content="식당 9곳의 경로로 후보 생성, 온도와 채택·기각 확률, 자유 실험까지 배우는 SA 알고리즘 튜토리얼">
   <title>SA 알고리즘 · 단계별 튜토리얼</title>
-  <link rel="stylesheet" href="tutorial.css?v=20261124-3">
+  <link rel="stylesheet" href="tutorial.css?v=20261124-4">
   <script src="tutorial-model.js?v=20261103-3" defer></script>
-  <script src="tutorial.js?v=20261103-3" defer></script>
+  <script src="tutorial.js?v=20261124-4" defer></script>
 </head>
 <body>
   <div class="app-shell">
-    <header class="masthead"><a class="brand" href="./"><span class="brand-icon">↗</span>SA 알고리즘<span class="brand-tag">알고리즘 실험실</span></a><div class="masthead-actions"><a class="intro-nav" href="intro.html">알고리즘 소개 ↗</a><span class="edition">LEARN → EXPLORE</span></div></header>
-    <section class="sa-intro" aria-label="SA 알고리즘과 문제 선정 배경">
-      <article class="intro-card"><p class="eyebrow">알고리즘 소개</p><h2>SA 알고리즘이란?</h2><p>담금질(Simulated Annealing, SA)은 금속을 가열한 뒤 천천히 식혀 안정된 구조를 얻는 과정에서 착안한 최적화 방법입니다.<br>현재 해에서 작은 변화를 준 후보 해를 만들고, 더 나아지면 받아들입니다.<br>초기에는 더 나쁜 해도 일정 확률로 수용해 지역 최적해에 갇히는 것을 피합니다.<br>탐색이 진행되며 온도를 낮추면 무작위 수용이 줄고 좋은 해 주변으로 수렴합니다.</p></article>
-      <article class="intro-card"><p class="eyebrow">문제 선정 배경</p><h2>학교 식당 방문 순서를 최적화해요</h2><p>여러 학교 식당을 모두 방문하고 출발점으로 돌아오는 순서는 외판원 문제(TSP)로 모델링할 수 있습니다.<br>방문할 식당이 늘수록 가능한 순서가 급격히 많아져 모든 경우를 확인하기 어렵습니다.<br>그래서 SA가 경로를 조금씩 바꾸며 이동 거리가 짧은 순서를 찾는 과정을 시각화했습니다.<br>장점은 큰 탐색 공간에서도 비교적 빠르게 좋은 해를 찾는 점이고, 단점은 결과가 달라질 수 있으며 최적 경로를 보장하지 않는 점입니다.</p></article>
-    </section>
-    <section class="page-heading"><div><p class="eyebrow">SIMULATED ANNEALING · INTERACTIVE TUTORIAL</p><h1>SA 알고리즘</h1><p class="lead">식당 9곳의 방문 순서를 바꾸며, 무작위 후보가 더 나은 해가 되는 과정을 배워 보세요.</p></div><span class="lesson-label" id="lessonLabel">PART 01 / 03</span></section>
-    <nav class="part-nav" aria-label="학습 파트"><button class="part-tab active" data-part="1" aria-current="step"><span>01</span><div>후보 경로 만들기<small>무작위 추출과 구간 뒤집기</small></div></button><button class="part-tab" data-part="2"><span>02</span><div>온도와 선택의 확률<small>긴 경로도 받아들이는 이유</small></div></button><button class="part-tab" data-part="3"><span>03</span><div>내가 직접 실험하기<small>조건을 바꾸며 자유롭게 탐색</small></div></button></nav>
+    <header class="masthead"><a class="brand" href="./"><span class="brand-icon">↗</span>SA 알고리즘<span class="brand-tag">알고리즘 실험실</span></a><span class="edition">LEARN → EXPLORE</span></header>
+    <section class="page-heading"><div><p class="eyebrow">SIMULATED ANNEALING · INTERACTIVE TUTORIAL</p><h1>SA 알고리즘</h1><p class="lead">소개부터 직접 실험까지, 네 단계로 담금질 알고리즘을 배워 보세요.</p></div><span class="lesson-label" id="lessonLabel">PART 00 / 04</span></section>
+    <nav class="part-nav" aria-label="학습 파트"><button class="part-tab active" data-part="0" aria-current="step"><span>00</span><div>알고리즘 소개<small>원리와 문제 이해하기</small></div></button><button class="part-tab" data-part="1"><span>01</span><div>후보 경로 만들기<small>무작위 추출과 구간 뒤집기</small></div></button><button class="part-tab" data-part="2"><span>02</span><div>온도와 선택의 확률<small>긴 경로도 받아들이는 이유</small></div></button><button class="part-tab" data-part="3"><span>03</span><div>내가 직접 실험하기<small>조건을 바꾸며 자유롭게 탐색</small></div></button></nav>
     <main>
-      <section id="tutorialView" aria-label="단계별 튜토리얼">
+      <section id="introView" class="intro-view" aria-label="SA 알고리즘 소개">
+        <article class="panel intro-overview"><p class="eyebrow">BEFORE YOU START</p><h2>담금질 알고리즘, 개인의 경험에서 집단의 탐색으로</h2><div class="intro-copy"><p>담금질(Simulated Annealing, SA)은 금속을 가열한 뒤 천천히 식혀 안정된 구조를 얻는 과정에서 착안했습니다.</p><p>최적화 문제에서는 가능한 답 하나를 <strong>현재 해</strong>로 두고, 작은 변화를 준 <strong>후보 해</strong>를 만들어 비교합니다.</p><p>후보가 더 나아지면 바로 받아들입니다. 더 나빠졌더라도 탐색 초반에는 일정 확률로 수용해 다른 가능성을 살펴볼 수 있습니다.</p><p>온도가 내려갈수록 나쁜 후보를 받아들이는 확률도 낮아집니다. 넓게 탐색하는 일에서 좋은 해 주변을 다듬는 일로 서서히 무게가 옮겨갑니다.</p></div></article>
+        <div class="intro-columns">
+          <article class="panel intro-detail" id="introPrinciple"><p class="eyebrow">HOW IT MOVES</p><h2>후보를 비교하고, 온도를 낮춥니다</h2><p>후보 경로가 더 길어졌을 때 받아들일 확률은 거리 증가량과 현재 온도로 계산합니다.</p><div class="intro-formula"><span>더 긴 후보의 수락 확률</span><strong>P(수락) = exp(−Δ / T)</strong></div><p>Δ는 후보와 현재 경로의 길이 차이이고, T는 현재 온도입니다. 짧아지거나 길이가 같으면 항상 수락하고, 더 길어지면 위 확률에 따라 결정합니다.</p><div class="intro-formula"><span>이 실습의 냉각 예시</span><strong>T(t) = 160 × 0.65<sup>t</sup></strong></div><p>반복이 이어져 t가 커지면 온도가 낮아지고, 더 긴 경로를 수용할 가능성도 줄어듭니다.</p><aside class="intro-callout"><strong>최적 경로를 보장하지는 않습니다.</strong> 시작 경로와 무작위 선택에 따라 결과가 달라질 수 있습니다.</aside></article>
+          <article class="panel intro-detail"><p class="eyebrow">SYMBOL GUIDE</p><h2>기호가 뜻하는 것</h2><dl class="intro-symbols"><div><dt>T</dt><dd>현재 온도. 더 긴 후보를 받아들일 가능성을 조절합니다.</dd></div><div><dt>t</dt><dd>탐색이 진행된 단계입니다.</dd></div><div><dt>Δ</dt><dd>후보 경로 길이에서 현재 경로 길이를 뺀 값입니다.</dd></div><div><dt>현재 해</dt><dd>알고리즘이 지금 살펴보는 방문 순서입니다.</dd></div><div><dt>최선의 해</dt><dd>탐색 중 지금까지 발견한 가장 짧은 경로입니다.</dd></div></dl></article>
+          <article class="panel intro-detail"><p class="eyebrow">ONE ITERATION AT A TIME</p><h2>탐색은 이렇게 진행됩니다</h2><ol class="intro-steps"><li><strong>현재 경로에서 출발</strong><span>식당 아홉 곳을 방문하고 출발점으로 돌아옵니다.</span></li><li><strong>이웃 경로 제안</strong><span>두 위치를 고르고 그 사이의 방문 순서를 뒤집습니다.</span></li><li><strong>비교하고 채택</strong><span>짧아지면 채택하고, 길어지면 확률에 따라 결정합니다.</span></li><li><strong>기록하고 냉각</strong><span>최선의 경로를 기록한 뒤 온도를 낮추고 반복합니다.</span></li></ol></article>
+          <article class="panel intro-detail"><p class="eyebrow">THE ROUTE PROBLEM</p><h2>식당 아홉 곳을 한 바퀴</h2><p>이 실습은 여러 장소를 한 번씩 방문하고 출발점으로 돌아오는 외판원 문제(TSP)를 다룹니다. 가능한 방문 순서는 장소 수가 늘수록 빠르게 많아집니다.</p><p>지도는 안내도의 상대 위치를 옮긴 도식입니다. 계산에 쓰는 값은 도식상의 직선거리이며 실제 보행거리나 미터 단위가 아닙니다.</p><button class="button primary intro-start" type="button" data-go-part="1">후보 경로 만들기 시작 →</button></article>
+        </div>
+      </section>
+      <section id="tutorialView" aria-label="단계별 튜토리얼" hidden>
         <div class="lesson-progress"><span id="progressText">장면 1</span><div class="progress-track"><i id="progressFill"></i></div><button class="text-button" id="restartPart">이 파트 처음부터 ↺</button></div>
         <div class="learning-layout">
           <div class="scene-column">
